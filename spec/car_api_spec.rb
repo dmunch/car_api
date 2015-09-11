@@ -21,4 +21,13 @@ describe "car_api" do
     get '/cars'
     expect(last_response.body).to eq "location parameter missing" 
   end
+  
+  it "refuses requests with malformed location parameter with http status 400, bad request" do
+    get '/cars?location=12.3,'
+    expect(last_response.status).to eq 400 
+  end
+  it "refuses requests with malformed location parameter with approbiate error message" do
+    get '/cars?location=12.3,'
+    expect(last_response.body).to eq "location parameter malformed" 
+  end
 end
