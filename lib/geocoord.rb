@@ -9,4 +9,8 @@ class GeoCoord
     @lat = match[1].to_f
     @long = match[2].to_f
   end
+
+  def ==(o)
+    o.class == self.class && o.lat == lat && o.long == long 
+  end
 end	

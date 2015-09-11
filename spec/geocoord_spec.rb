@@ -31,6 +31,9 @@ RSpec.describe GeoCoord do
       expect { GeoCoord.new(",13.3") }.to raise_error(ArgumentError, "Invalid coordinate string format")
     end
   end
+  it "correctly implements the == operator" do
+    expect(GeoCoord.new("12.3,14.4")).to eq GeoCoord.new("12.3,14.4")
+  end
 end
       
     
