@@ -2,6 +2,12 @@ require 'pg'
 require 'geocoord'
 
 class CarRepository
+  def self.use(*args)
+    yield handle = new(*args)
+  ensure
+    handle.close
+  end
+  
   def initialize()
     @conn = PGconn.connect('192.168.99.100', 5432, '', '', "car_api", "postgres", "mysecretpassword")
     query_car_data_sql = %{
@@ -17,6 +23,10 @@ class CarRepository
     @conn.prepare('query_car_data', query_car_data_sql); 
     @conn.prepare('query_car_data_json', query_car_data_json_sql); 
     @conn.prepare('insert_car_data', 'INSERT INTO car_data(car_data) VALUES ($1)')
+  end
+
+  def close()
+    @conn.close()
   end
 
   def find_cars_by_geocoord(coord)

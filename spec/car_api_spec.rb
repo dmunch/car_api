@@ -12,6 +12,12 @@ RSpec.describe "car_api" do
   end
   let(:repository) { double("car_repository") }
 
+  it "calls close after the end of the request" do
+    expect(repository).to receive(:close)
+    
+    get '/cars?location=12.3,14.4'
+  end
+  
   context "not given a location parameter" do
     it "refuses request with http status 400, bad request" do
       get '/cars'
