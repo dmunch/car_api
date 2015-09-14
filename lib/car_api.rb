@@ -2,11 +2,10 @@ require 'sinatra'
 require 'geocoord'
 
 class CarApi < Sinatra::Base
-  def initialize(app, repository)
+  def initialize(app, repClass)
     super(app)
-    @repository = repository 
+    @repClass = repClass
   end
-
   get '/cars' do
     content_type:json
 
@@ -19,6 +18,8 @@ class CarApi < Sinatra::Base
       halt 400, {'Content-Type' => 'text/plain'}, error.message 
     end
 
-    @repository.find_cars_by_geocoord(coord)
+    @repClass.use() do |repository|
+      repository.find_cars_by_geocoord(coord)
+    end
   end
 end

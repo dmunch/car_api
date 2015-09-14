@@ -5,6 +5,5 @@ Bundler.require
 require 'car_api'
 require 'car_repository'
 
-app = CarApi.new(nil, CarRepository.new())
+app = CarApi.new(nil, CarRepository)
 run app
-#run CarApi.new(app, repository: CarRepository.new()) 
