@@ -22,6 +22,9 @@ class CarRepository
   def find_cars_by_geocoord(coord)
     @conn.exec_prepared('query_car_data_json', [coord.lat, coord.long])[0]['cars']
   end
+  def find_cars_by_coords(lat, long)
+    @conn.exec_prepared('query_car_data_json', [lat, long])[0]['cars']
+  end
 
   def insert(car_data)
     #make sure we have at least lat and long

@@ -2,7 +2,7 @@ require 'car_repository'
 require 'json'
 require 'rspec'
 require 'haversine'
-
+require 'random-location'
 
 RSpec.describe CarRepository do
   it "should successfully connect to the database and find 10 cars" do
@@ -24,6 +24,26 @@ RSpec.describe CarRepository do
     distances = cars.map{ |car| metric.call(12.2, 13.3, car) }
     expect(distances.each_cons(2).all?{|i,j| i <= j}).to be_truthy
   end
-  
-end
+ 
+  it "should find the 10 nearest cars relative to given location" do
+    repo = CarRepository.new()
+    repo.delete_all()
 
+    test_lats = [12.2, 13.3, 144.4, 155.5]
+    test_longs = [13.3, 12.2, 155.5, 144.4]
+  
+    coords_with_index = test_lats.zip(test_longs).to_enum.with_index
+    
+    coords_with_index.each do |coord, i|
+      (0..20).each do |rep|
+        random_coord = RandomLocation.near_by(coord[0], coord[1], 10000)
+        repo.insert({'latitude' => random_coord[0], 'longitude' => random_coord[1], 'descr' => i})
+      end
+    end 
+    
+    coords_with_index.each do |coord, i|
+      cars = JSON.parse(repo.find_cars_by_coords(coord[0], coord[1]))['cars']
+      expect(cars.all?{|c| c['descr'] == i}).to be_truthy 
+    end 
+  end
+end 
