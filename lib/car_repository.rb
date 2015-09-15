@@ -15,7 +15,13 @@ class CarRepository
   end
   
   def self.connect()
-    conn = PGconn.connect('192.168.99.100', 5432, '', '', "car_api", "postgres", "mysecretpassword") 
+
+    host = ENV["POSTGIS_PORT_5432_TCP_ADDR"] || "192.168.99.100"
+    port= ENV["POSTGIS_PORT_5432_TCP_PORT"].to_i || 5432 
+    user = ENV["PGUSER"] || "postgres"
+    password = ENV["PGPASSWORD"]
+    database = "car_api" 
+    conn = PGconn.connect(host, port, '', '', database, user, password) 
     
     query_car_data_sql = %{
       SELECT car_data FROM car_data 
