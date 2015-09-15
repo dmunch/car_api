@@ -7,7 +7,6 @@ require 'random-location'
 RSpec.describe CarRepository do
   it "should successfully connect to the database and find 10 cars" do
     CarRepository.use() do |repo|
-      repo = CarRepository.new()
       car_data = JSON.parse(repo.find_cars_by_geocoord(GeoCoord.new("12.2,13.3")))
       expect(car_data['cars'].length).to eq 10
     end
@@ -49,5 +48,14 @@ RSpec.describe CarRepository do
         expect(cars.all?{|c| c['descr'] == i}).to be_truthy 
       end
     end
+  end
+  it "should reuse connections in pool" do
+    #create 100 instances of repo
+    (0..100).each{ CarRepository.use() { |repo| }}
+   
+    #number of connections should still be 1
+    CarRepository.use() do |repo|
+      expect(repo.num_connections).to eq(1)
+    end 
   end
 end 

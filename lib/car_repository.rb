@@ -1,15 +1,22 @@
 require 'pg'
 require 'geocoord'
+require 'connection_pool'
 
 class CarRepository
+  @@n = 10
+  @@number_of_connections_in_pool = 5 
+  @@pool = ConnectionPool.new(size: @@number_of_connections_in_pool, timeout: 10) { connect() } 
   def self.use(*args)
-    yield handle = new(*args)
+    @@pool.with do |conn|
+      yield handle = new(conn, *args)
+    end
   ensure
-    handle.close
+    #connection is checked in by connection pool 
   end
   
-  def initialize()
-    @conn = PGconn.connect('192.168.99.100', 5432, '', '', "car_api", "postgres", "mysecretpassword")
+  def self.connect()
+    conn = PGconn.connect('192.168.99.100', 5432, '', '', "car_api", "postgres", "mysecretpassword") 
+    
     query_car_data_sql = %{
       SELECT car_data FROM car_data 
       --Note: ST_Point takes coordinate in lon, lat, our convention is lat, lon that's why we inverse here
@@ -20,13 +27,14 @@ class CarRepository
     }
     query_car_data_json_sql = %{SELECT json_build_object('cars', json_agg(car_data)) as cars FROM (#{query_car_data_sql}) sub }
 
-    @conn.prepare('query_car_data', query_car_data_sql); 
-    @conn.prepare('query_car_data_json', query_car_data_json_sql); 
-    @conn.prepare('insert_car_data', 'INSERT INTO car_data(car_data) VALUES ($1)')
-  end
-
-  def close()
-    @conn.close()
+    conn.prepare('query_car_data', query_car_data_sql); 
+    conn.prepare('query_car_data_json', query_car_data_json_sql); 
+    conn.prepare('insert_car_data', 'INSERT INTO car_data(car_data) VALUES ($1)')
+    conn
+  end 
+  
+  def initialize(conn)
+    @conn = conn
   end
 
   def find_cars_by_geocoord(coord)
@@ -50,5 +58,9 @@ class CarRepository
   
   def delete_all()
     @conn.exec('DELETE FROM car_data')
+  end
+
+  def num_connections
+    @conn.exec('SELECT sum(numbackends) AS numbackends FROM pg_stat_database;')[0]['numbackends'].to_i
   end
 end
