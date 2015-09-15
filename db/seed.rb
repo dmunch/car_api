@@ -5,9 +5,10 @@ require 'json'
 file = File::read('data.json')
 car_data = JSON.parse(file)
 
-rep = CarRepository.new()
-rep.delete_all()
+CarRepository.use() do |rep|
+  rep.delete_all()
 
-car_data['locations'].cycle(1).each do |location|
-  rep.insert(location)
+  car_data['locations'].cycle(1).each do |location|
+    rep.insert(location)
+  end
 end
