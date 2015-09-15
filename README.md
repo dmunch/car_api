@@ -4,11 +4,11 @@
 
 - Install [Docker](https://docs.docker.com/installation/) and [Docker Compose](https://docs.docker.com/compose/install/). If you're on Windows or Mac OSX go directly for the [Docker Toolbox](https://www.docker.com/toolbox).
 - Clone this repository and cd into it.
-- Initalize the database by running ``` docker-compose run car_api rake db:init```
+- Initalize the database by running ``` docker-compose run car_api rake db:init```. Lots of things are happening here on the first run, so be a little patient.
 - Run the tests by running ``` docker-compose run car_api rake spec```
 - If you're patient, run the benchmark by running ``` docker-compose run car_api rake spec:benchmark```
 - Seed the database with the data provided in data.json by running ``` docker-compose run car_api rake db:seed```
-- Start the API with ``` docker-compose start car_api```
+- Start the API with ``` docker-compose up -d car_api```
 
 If you used the Docker Toolbox the API should now be available under http://192.168.99.100:5000/cars
 If you are on Linux, it's available under http://localhost:5000/cars
