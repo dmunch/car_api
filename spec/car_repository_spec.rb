@@ -3,6 +3,7 @@ require 'json'
 require 'rspec'
 require 'haversine'
 require 'random-location'
+require 'benchmark'
 
 RSpec.describe CarRepository do
   it "should successfully connect to the database and find 10 cars" do
@@ -57,5 +58,21 @@ RSpec.describe CarRepository do
     CarRepository.use() do |repo|
       expect(repo.num_connections).to eq(1)
     end 
+  end
+  it "should be fast, independently of the number of cars", :benchmark => true do
+    CarRepository.use() do |repo|
+      repo.delete_all()
+
+      number_of_data_sets = 200000
+      puts "Building up data for benchmark (#{number_of_data_sets}), this can take a while..." 
+      (0..number_of_data_sets).each do |i|
+        random_coord = RandomLocation.near_by(52.4699221,13.4373798, 10000000)
+        repo.insert({'latitude' => random_coord[0], 'longitude' => random_coord[1], 'descr' => i})
+      
+        puts "..(#{i})" unless i.modulo(10000) != 0
+      end
+      
+      expect(Benchmark.realtime{ repo.find_cars_by_coords(52.4699221,13.4373798) }).to be <= 2
+    end
   end
 end 
