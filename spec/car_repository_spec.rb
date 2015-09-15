@@ -8,6 +8,13 @@ require 'benchmark'
 RSpec.describe CarRepository do
   it "should successfully connect to the database and find 10 cars" do
     CarRepository.use() do |repo|
+      #setup test data
+      repo.delete_all()
+      (0..20).each do |i|
+        random_coord = RandomLocation.near_by(52.4699221,13.4373798, 100000)
+        repo.insert({'latitude' => random_coord[0], 'longitude' => random_coord[1], 'descr' => i})
+      end
+      
       car_data = JSON.parse(repo.find_cars_by_geocoord(GeoCoord.new("12.2,13.3")))
       expect(car_data['cars'].length).to eq 10
     end
@@ -15,6 +22,13 @@ RSpec.describe CarRepository do
 
   it "should order results descending by euclidian distance relative to query point" do
     CarRepository.use() do |repo|
+      #setup test data
+      repo.delete_all()
+      (0..20).each do |i|
+        random_coord = RandomLocation.near_by(52.4699221,13.4373798, 100000)
+        repo.insert({'latitude' => random_coord[0], 'longitude' => random_coord[1], 'descr' => i})
+      end
+      
       car_data = JSON.parse(repo.find_cars_by_geocoord(GeoCoord.new("12.2,13.3")))
       
       #This metric is for Haversine distance. However, due to lack of specification we settle with euclidian distance.
@@ -30,6 +44,7 @@ RSpec.describe CarRepository do
  
   it "should find the 10 nearest cars relative to given location" do
     CarRepository.use() do |repo|
+      #setup test data
       repo.delete_all()
 
       test_lats = [12.2, 13.3, 144.4, 155.5]
