@@ -1,0 +1,20 @@
+postgis:
+  image: mdillon/postgis
+  ports:
+    - "5432:5432"
+  environment:
+    - POSTGRES_PASSWORD=mysecretpassword
+  volumes:
+  #when on boot2docker pay attention with volumes on shared folders, there are problems with permission
+    - /tmp/postgres_data:/var/lib/postgresql
+
+car_api:
+  build: ./
+  environment:
+    - PGUSER=postgres
+    - PGPASSWORD=mysecretpassword
+    - RACK_ENV=production
+  ports:
+    - "5000:5000"
+  links:
+    - postgis

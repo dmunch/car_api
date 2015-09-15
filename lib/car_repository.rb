@@ -17,7 +17,7 @@ class CarRepository
   def self.connect()
 
     host = ENV["POSTGIS_PORT_5432_TCP_ADDR"] || "192.168.99.100"
-    port= ENV["POSTGIS_PORT_5432_TCP_PORT"].to_i || 5432 
+    port= ENV["POSTGIS_PORT_5432_TCP_PORT"] || 5432 
     user = ENV["PGUSER"] || "postgres"
     password = ENV["PGPASSWORD"]
     database = "car_api" 

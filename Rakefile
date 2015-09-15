@@ -1,7 +1,8 @@
 require 'rspec/core/rake_task'
 
-task :initdb do
-  `psql -h 192.168.99.100 -U postgres -p 5432 -f db/init.sql`
+task :default do
+  conf = File.expand_path('config.ru', File.dirname(__FILE__))
+  `thin -R #{conf} start -p 5000`
 end
 
 namespace :db do
@@ -27,7 +28,7 @@ RSpec::Core::RakeTask.new(:spec) do |t|
   t.rspec_opts = "-f d --tag ~benchmark" 
 end
 namespace :spec do
-RSpec::Core::RakeTask.new(:benchmark) do |t|
-  t.rspec_opts = "-f d --tag benchmark" 
-end
+  RSpec::Core::RakeTask.new(:benchmark) do |t|
+    t.rspec_opts = "-f d --tag benchmark" 
+  end
 end
