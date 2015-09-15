@@ -1,6 +1,38 @@
+## Run instructions
+
+### By using Docker (aka the simple way)
+
+- Install [Docker](https://docs.docker.com/installation/) and [Docker Compose](https://docs.docker.com/compose/install/). If you're on Windows or Mac OSX go directly for the [Docker Toolbox](https://www.docker.com/toolbox).
+- Clone this repository and cd into it.
+- Initalize the database by running ``` docker-compose run car_api rake db:init```
+- Run the tests by running ``` docker-compose run car_api rake spec```
+- If you're patient, run the benchmark by running ``` docker-compose run car_api rake spec:benchmark```
+- Seed the database with the data provided in data.json by running ``` docker-compose run car_api rake db:seed```
+- Start the API with ``` docker-compose start car_api```
+
+If you used the Docker Toolbox the API should now be available under http://192.168.99.100:5000/cars
+If you are on Linux, it's available under http://localhost:5000/cars
+
+### The classic way
+
+You need to:
+- provide an instance of Postgres >= 9.4 with Postgis extensions enabled. Version 9.4 is mandatory since we use the JSONB datatype.
+- export the following environement variables
+  - POSTGIS_PORT_5432_TCP_ADDR
+  - POSTGIS_PORT_5432_TCP_PORT if not 5432
+  - PGUSER if not postgres
+  - PGPASSWORD
+  - RACK_ENV=production if you want the production environement
+- Install the dependencies by running ``` bundle install ```
+- Initalize the database by running ``` rake db:init```
+- Run the tests by running ``` rake spec```
+- If you're patient, run the benchmark by running ``` rake spec:benchmark```
+- Seed the database with the data provided in data.json by running ``` rake db:seed```
+- Start the API with ``` rake ```
+
+The API is now available under http://localhost:5000/cars
+
 # Cars API
-
-
 As an extension to our current backend infrastructure, we decided to create a car-sharing API to help us to show the best options around an user’s position.
 
 In order to show cars on a map, all we need is a name, description and position of the vehicle. And it is up to the api to organize different data sources and provide a single response via an endpoint.
