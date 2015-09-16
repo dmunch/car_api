@@ -1,10 +1,17 @@
+This example was realized using Ruby, Sinatra, RSpec for unit tests and PostgreSQL 9.4. The choice of not using an ORM was deliberate for various reasons:
+- There's no business logic on the Ruby side, so no need for a strong model
+- By using Postgres' JSONB type we don't have a static schema
+- No mapping, serialization, and deserialization is needed. By directly storing JSON in the database all we need to do is passing it through. 
+
+As a matter-of-fact, the CarRepository knows nothing about cars and acts more as a spatial-enabled JSON store. If we need a strong domain-model later-on the mapping to POROs can be done in a second step.
+
 ## Run instructions
 
 ### By using Docker (aka the simple way)
 
 - Install [Docker](https://docs.docker.com/installation/) and [Docker Compose](https://docs.docker.com/compose/install/). If you're on Windows or Mac OSX go directly for the [Docker Toolbox](https://www.docker.com/toolbox).
 - Clone this repository and cd into it.
-- Initalize the database by running ``` docker-compose run car_api rake db:init```. Lots of things are happening here on the first run, so be a little patient.
+- Initialize the database by running ``` docker-compose run car_api rake db:init```. Lots of things are happening here on the first run, so be a little patient.
 - Run the tests by running ``` docker-compose run car_api rake spec```
 - If you're patient, run the benchmark by running ``` docker-compose run car_api rake spec:benchmark```
 - Seed the database with the data provided in data.json by running ``` docker-compose run car_api rake db:seed```
@@ -17,14 +24,14 @@ If you are on Linux, it's available under http://localhost:5000/cars
 
 You need to:
 - provide an instance of Postgres >= 9.4 with Postgis extensions enabled. Version 9.4 is mandatory since we use the JSONB datatype.
-- export the following environement variables
+- export the following environment variables
   - POSTGIS_PORT_5432_TCP_ADDR
   - POSTGIS_PORT_5432_TCP_PORT if not 5432
   - PGUSER if not postgres
   - PGPASSWORD
-  - RACK_ENV=production if you want the production environement
+  - RACK_ENV=production if you want the production enviroement
 - Install the dependencies by running ``` bundle install ```
-- Initalize the database by running ``` rake db:init```
+- Initialize the database by running ``` rake db:init```
 - Run the tests by running ``` rake spec```
 - If you're patient, run the benchmark by running ``` rake spec:benchmark```
 - Seed the database with the data provided in data.json by running ``` rake db:seed```
