@@ -46,6 +46,10 @@ In order to show cars on a map, all we need is a name, description and position 
 
 ## Instructions
 
+The code challenge has to be implemented in **Ruby**. The web framework and libraries used are up to your choice.
+
+Bear in mind that your solution should be scalable, so optimizations for better performance are a plus.
+
 In this exercise, your job is to build a simple API/webservice that expose one single endpoint called `/cars` that receives a GET with the location parameter as the example below:
 
 GET /cars?location=51.5444204,-0.22707
