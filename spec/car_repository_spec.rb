@@ -86,8 +86,12 @@ RSpec.describe CarRepository do
       
         puts "..(#{i})" unless i.modulo(10000) != 0
       end
+     
+      random_coords = (1..100).map { RandomLocation.near_by(52.4699221,13.4373798, 10000000) } 
+      time = Benchmark.realtime { random_coords.each { |random_coord| repo.find_cars_by_coords(random_coord[0], random_coord[1]) }}
       
-      expect(Benchmark.realtime{ repo.find_cars_by_coords(52.4699221,13.4373798) }).to be <= 2
+      #with 100 samples this makes an average time of 5ms
+      expect(time).to be <= 0.5
     end
   end
 end 

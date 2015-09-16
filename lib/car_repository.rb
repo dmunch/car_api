@@ -26,9 +26,9 @@ class CarRepository
     query_car_data_sql = %{
       SELECT car_data FROM car_data 
       --Note: ST_Point takes coordinate in lon, lat, our convention is lat, lon that's why we inverse here
-      ORDER BY ST_SetSRID(ST_Point((car_data->>'longitude')::float, (car_data->>'latitude')::float), 4326) <-> ST_SetSRID(ST_Point($2, $1), 4326)
+      ORDER BY json_to_point(car_data) <-> ST_SetSRID(ST_Point($2, $1), 4326)
       --This one is for Haversine distance. However, due to lack of specification we settle with euclidian distance.
-      --ORDER BY ST_Distance(Geography(ST_SetSRID(ST_Point((car_data->>'longitude')::float, (car_data->>'latitude')::float), 4326)), Geography(ST_SetSRID(ST_Point($2, $1), 4326)))
+      --ORDER BY ST_Distance(Geography(json_to_point(car_data)), Geography(ST_SetSRID(ST_Point($2, $1), 4326)))
 			LIMIT 10
     }
     query_car_data_json_sql = %{SELECT json_build_object('cars', json_agg(car_data)) as cars FROM (#{query_car_data_sql}) sub }
